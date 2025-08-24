@@ -1,7 +1,12 @@
 name: Generate TikTok Video
 
 on:
-  workflow_dispatch:   # permette di avviarlo a mano da GitHub
+  workflow_dispatch:
+    inputs:
+      story_text:
+        description: "Inserisci qui la tua storia"
+        required: true
+        default: "Era una notte buia e tempestosa..."
 
 jobs:
   build:
@@ -24,6 +29,7 @@ jobs:
     - name: Run script
       env:
         PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+        STORY_TEXT: ${{ github.event.inputs.story_text }}
       run: python main.py
 
     - name: Upload video artifact
