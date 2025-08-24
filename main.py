@@ -80,3 +80,23 @@ if __name__ == "__main__":
     print("🎬 Creo il video...")
     create_video(image_file, audio_file, STORY_TEXT)
     print("✅ Video creato con successo!")
+
+def create_video(image_path, audio_path, text):
+    # Carico immagine e audio
+    image_clip = ImageClip(image_path).set_duration(AudioFileClip(audio_path).duration)
+    audio_clip = AudioFileClip(audio_path)
+
+    # Creo immagine con testo
+    text_img = create_text_image(text)
+    text_clip = ImageClip(text_img).set_duration(audio_clip.duration).set_position(("center", "bottom"))
+
+    # Composizione finale
+    final_clip = CompositeVideoClip([image_clip, text_clip])
+    final_clip = final_clip.set_audio(audio_clip)
+
+    # Salvataggio del video nella root del repo
+    output_file = "output_tiktok.mp4"
+    print(f"🎥 Esporto video in {output_file}...")
+    final_clip.write_videofile(output_file, fps=24, codec="libx264", audio_codec="aac")
+
+    print("✅ Video creato con successo!")
