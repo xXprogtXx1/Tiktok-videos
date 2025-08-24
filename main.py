@@ -7,7 +7,7 @@ from PIL import Image, ImageDraw, ImageFont
 PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
 PEXELS_URL = "https://api.pexels.com/v1/search"
 
-STORY_TEXT = "L’uomo non smette mai di imparare, anche quando pensa di sapere tutto."
+STORY_TEXT = os.getenv("STORY_TEXT", "L'uomo non smette mai di imparare, anche quando pensa di sapere tutto.")
 IMAGE_QUERY = "nature landscape"
 
 # 🔧 Funzione per normalizzare il testo (rimuove caratteri non ASCII problematici)
@@ -55,36 +55,12 @@ def create_text_image(text, filename="text.png"):
     return filename
 
 # 🔧 Crea video finale
-def create_video(image_file, audio_file, text, output="final_video.mp4"):
-    text = normalize_text(text)  # 👈 fix qui
-    text_img = create_text_image(text)
-
-    audio = AudioFileClip(audio_file)
-    img_clip = ImageClip(image_file).set_duration(audio.duration).resize(height=1920)
-    text_clip = ImageClip(text_img).set_duration(audio.duration)
-
-    final = CompositeVideoClip([img_clip, text_clip.set_position("center")])
-    final = final.set_audio(audio)
-    final.write_videofile(output, fps=24)
-
-# MAIN
-if __name__ == "__main__":
-    print("📸 Scarico immagine da Pexels...")
-    image_file = download_image(IMAGE_QUERY)
-    print("✅ Immagine scaricata")
-
-    print("🎤 Genero audio...")
-    audio_file = generate_audio(STORY_TEXT)
-    print("✅ Audio generato")
-
-    print("🎬 Creo il video...")
-    create_video(image_file, audio_file, STORY_TEXT)
-    print("✅ Video creato con successo!")
-
 def create_video(image_path, audio_path, text):
+    text = normalize_text(text)
+
     # Carico immagine e audio
-    image_clip = ImageClip(image_path).set_duration(AudioFileClip(audio_path).duration)
     audio_clip = AudioFileClip(audio_path)
+    image_clip = ImageClip(image_path).set_duration(audio_clip.duration).resize(height=1920)
 
     # Creo immagine con testo
     text_img = create_text_image(text)
@@ -98,5 +74,17 @@ def create_video(image_path, audio_path, text):
     output_file = "output_tiktok.mp4"
     print(f"🎥 Esporto video in {output_file}...")
     final_clip.write_videofile(output_file, fps=24, codec="libx264", audio_codec="aac")
-
     print("✅ Video creato con successo!")
+
+# MAIN
+if __name__ == "__main__":
+    print("📸 Scarico immagine da Pexels...")
+    image_file = download_image(IMAGE_QUERY)
+    print("✅ Immagine scaricata")
+
+    print("🎤 Genero audio...")
+    audio_file = generate_audio(STORY_TEXT)
+    print("✅ Audio generato")
+
+    print("🎬 Creo il video...")
+    create_video(image_file, audio_file, STORY_TEXT)
