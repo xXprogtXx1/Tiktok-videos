@@ -29,8 +29,14 @@ audio_clip = mp.AudioFileClip("story.mp3")
 # aggiungi audio al video
 final_clip = video_clip.set_audio(audio_clip)
 
-# aggiungi testo sovrapposto
-txt_clip = mp.TextClip(story_text, fontsize=40, color='white', size=video_clip.size, method="caption")
+# aggiungi testo sovrapposto usando method="label" (no ImageMagick)
+txt_clip = mp.TextClip(
+    story_text,
+    fontsize=40,
+    color='white',
+    size=video_clip.size,
+    method="label"  # ← importante!
+)
 txt_clip = txt_clip.set_duration(final_clip.duration).set_pos("center")
 
 final = mp.CompositeVideoClip([final_clip, txt_clip])
