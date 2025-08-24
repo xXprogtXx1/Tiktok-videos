@@ -1,7 +1,7 @@
 moviepy==1.0.3
-imageio==2.34.1
-imageio-ffmpeg==0.5.1
-numpy
-Pillow
 gTTS==2.5.1
 requests
+numpy
+Pillow
+imageio
+imageio-ffmpeg
